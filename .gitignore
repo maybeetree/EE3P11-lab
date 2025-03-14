@@ -1,0 +1,12 @@
+*.zip
+*.vim*
+*.log
+*.pyo
+*.pyc
+*.pyd
+*.pyi
+*.pdf
+*.swp
+venv
+__pycache__
+

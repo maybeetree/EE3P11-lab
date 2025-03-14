@@ -12,10 +12,7 @@ def log(*args, **kwargs):
 csvdir = Path('data/Session1-EMLabs')
 outdir = Path('output')
 
-scatter_args = dict(
-    # Make the scatter point small
-    s=2,
-    linewidth=0
+plot_args = dict(
     )
 
 def readcsv(stem):
@@ -46,33 +43,55 @@ def makegraph(builder, stem):
     fig.savefig(outdir / f"{stem}.svg")
 
 def build_baseline(fig, ax):
-    ax.scatter(ds_baseline_ch1['x'], ds_baseline_ch1['y'], **scatter_args)
-    ax.scatter(ds_baseline_ch2['x'], ds_baseline_ch2['y'], **scatter_args)
+    ax.plot(
+            ds_baseline_ch2['x'],
+            ds_baseline_ch2['y'],
+            label='Reference signal',
+            **plot_args,
+            )
+    ax.plot(
+            ds_baseline_ch1['x'],
+            ds_baseline_ch1['y'],
+            label='Propagated signal',
+            **plot_args
+            )
     fig.suptitle("Baseline")
+    ax.legend()
 
 def build_long(fig, ax):
-    ax.scatter(ds_long_ch1['x'], ds_long_ch1['y'], **scatter_args)
-    ax.scatter(ds_long_ch2['x'], ds_long_ch2['y'], **scatter_args)
+    ax.plot(
+            ds_long_ch2['x'],
+            ds_long_ch2['y'],
+            label='Reference signal',
+            **plot_args,
+            )
+    ax.plot(
+            ds_long_ch1['x'],
+            ds_long_ch1['y'],
+            label='Propagated signal',
+            **plot_args,
+            )
     fig.suptitle("Long cable")
+    ax.legend()
 
 def build_open(fig, ax):
-    ax.scatter(ds_open['x'], ds_open['y'], **scatter_args)
+    ax.plot(ds_open['x'], ds_open['y'], **plot_args)
     fig.suptitle("Open Circuit")
 
 def build_short(fig, ax):
-    ax.scatter(ds_short['x'], ds_short['y'], **scatter_args)
+    ax.plot(ds_short['x'], ds_short['y'], **plot_args)
     fig.suptitle("Short Circuit")
 
 def build_matched(fig, ax):
-    ax.scatter(ds_matched['x'], ds_matched['y'], **scatter_args)
+    ax.plot(ds_matched['x'], ds_matched['y'], **plot_args)
     fig.suptitle("Matched Load")
 
 def build_black(fig, ax):
-    ax.scatter(ds_black['x'], ds_black['y'], **scatter_args)
+    ax.plot(ds_black['x'], ds_black['y'], **plot_args)
     fig.suptitle('"Black" Load')
 
 def build_gray(fig, ax):
-    ax.scatter(ds_gray['x'], ds_gray['y'], **scatter_args)
+    ax.plot(ds_gray['x'], ds_gray['y'], **plot_args)
     fig.suptitle('"Gray" Load')
 
 makegraph(build_baseline, 'baseline')

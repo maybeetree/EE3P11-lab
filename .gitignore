@@ -6,6 +6,7 @@
 *.pyd
 *.pyi
 *.pdf
+*.svg
 *.swp
 venv
 __pycache__

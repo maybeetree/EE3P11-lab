@@ -44,6 +44,7 @@ for csvfile in csvdir.rglob('*.CSV'):
     ax.set_xlabel('Time [???]')
     ax.set_ylabel('Voltage [V]')
     fig.savefig(outdir / f"{stem}.pdf")
+    fig.savefig(outdir / f"{stem}.svg")
 
 
 

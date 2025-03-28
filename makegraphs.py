@@ -49,6 +49,14 @@ def timedelay(ref, prop):
 
     return ref_index, prop_index, ref_time, prop_time
 
+def avglevels(y, string):
+    rng = y.max() - y.min()
+    y_max_avg = (y[y >= rng * 0.9]).mean()
+    y_min_avg = (y[y <= rng * 0.1]).mean()
+    print(f"{string} {y_min_avg=:.3E}")
+    print(f"{string} {y_max_avg=:.3E}")
+    return y_min_avg, y_max_avg
+
 def makegraph(builder, stem):
     fig, ax = plt.subplots(1)
     builder(fig, ax)
@@ -88,10 +96,13 @@ def build_baseline(fig, ax):
     fig.suptitle("Baseline")
     ax.legend()
 
+    #ymin, ymax = avglevels(ds_baseline['y'], 'baseline')
+
 def build_long(fig, ax):
     ref_index, prop_index, ref_time, prop_time = timedelay(ds_long_ch2, ds_long_ch1)
 
     log(f'Long Time delay: {prop_time - ref_time:.6E} s')
+    #ymin, ymax = avglevels(ds_long['y'], 'long')
 
     ax.plot(
             ds_long_ch2['x'],
@@ -119,22 +130,46 @@ def build_long(fig, ax):
 
 def build_open(fig, ax):
     ax.plot(ds_open['x'], ds_open['y'], **plot_args)
+
+    ymin, ymax = avglevels(ds_open['y'], 'open')
+
+    #ax.axhline(ymin, -1, 1, color='green')
+    #ax.axhline(ymax, -1, 1, color='green')
+    #ax.text(
+    #    s=f'Max Average Value:\n{ymax:.3E} s',
+    #    x = 0,
+    #    y = ymax * 0.9,
+    #    fontsize = 11,
+    #    color = 'g'
+    #    )
+    #ax.text(
+    #    s=f'Min Average Value:\n{ymin:.3E} s',
+    #    x = ds_open['x'].max() * 0.5,
+    #    y = ymin * 1.5,
+    #    fontsize = 11,
+    #    color = 'g'
+    #    )
+
     fig.suptitle("Open Circuit")
 
 def build_short(fig, ax):
     ax.plot(ds_short['x'], ds_short['y'], **plot_args)
+    ymin, ymax = avglevels(ds_short['y'], 'short')
     fig.suptitle("Short Circuit")
 
 def build_matched(fig, ax):
     ax.plot(ds_matched['x'], ds_matched['y'], **plot_args)
+    ymin, ymax = avglevels(ds_matched['y'], 'matched')
     fig.suptitle("Matched Load")
 
 def build_black(fig, ax):
     ax.plot(ds_black['x'], ds_black['y'], **plot_args)
+    ymin, ymax = avglevels(ds_black['y'], 'black')
     fig.suptitle('"Black" Load')
 
 def build_gray(fig, ax):
     ax.plot(ds_gray['x'], ds_gray['y'], **plot_args)
+    ymin, ymax = avglevels(ds_gray['y'], 'gray')
     fig.suptitle('"Gray" Load')
 
 makegraph(build_baseline, 'baseline')

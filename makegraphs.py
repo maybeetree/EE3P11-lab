@@ -2,6 +2,7 @@
 
 from pathlib import Path
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 from sys import stderr
 
@@ -22,6 +23,39 @@ def readcsv(stem):
     df.columns=['x', 'y']
     return df
 
+
+outdir.mkdir(exist_ok=True, parents=True)
+
+# ============  Propagation distance graph ==============
+
+ds_distance = pd.DataFrame(
+    [
+        [0, -18.27],
+        [10, -19.95],
+        [20, -21.93],
+        [30, -25.34],
+        [40, -26.90],
+        [50, -27.00],
+        ],
+    columns=['x', 'y']
+    )
+
+fig, ax = plt.subplots(1)
+ax.set_xlabel('Distance [cm]')
+ax.set_ylabel('System Transfer [gain]')
+
+fig.suptitle("Distance vs system transfer")
+
+ax.scatter(
+    ds_distance['x'],
+    np.pow(10, ds_distance['y'] / 10)
+    )
+
+fig.savefig(outdir / f"prop_distance.pdf")
+fig.savefig(outdir / f"prop_distance.svg")
+
+# ================== Cable propagation =================
+
 ds_baseline_ch1 = readcsv('TEK0000')
 ds_baseline_ch2 = readcsv('TEK0001')
 ds_long_ch1 = readcsv('TEK0002')
@@ -31,9 +65,6 @@ ds_short = readcsv('TEK0005')
 ds_matched = readcsv('TEK0006')
 ds_black = readcsv('TEK0007')
 ds_gray = readcsv('TEK0008')
-
-
-outdir.mkdir(exist_ok=True, parents=True)
 
 def timedelay(ref, prop):
     ref_10percent = (ref.y[len(ref.y) - 1] - ref.y[0]) * 0.1
@@ -53,8 +84,10 @@ def avglevels(y, string):
     rng = y.max() - y.min()
     y_max_avg = (y[y >= rng * 0.9]).mean()
     y_min_avg = (y[y <= rng * 0.1]).mean()
+    y_mid_avg = (y[[a and b for a, b in zip(y <= rng * 0.25, y <= rng * 0.75)]]).mean()
     print(f"{string} {y_min_avg=:.3E}")
     print(f"{string} {y_max_avg=:.3E}")
+    print(f"{string} {y_mid_avg=:.3E}")
     return y_min_avg, y_max_avg
 
 def makegraph(builder, stem):
